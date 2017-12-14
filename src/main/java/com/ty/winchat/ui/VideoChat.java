@@ -14,6 +14,7 @@ import com.ty.winchat.listener.TCPVideoReceiveListener;
 import com.ty.winchat.listener.UDPVoiceListener;
 import com.ty.winchat.listener.inter.OnBitmapLoaded;
 import com.ty.winchat.util.Constant;
+import com.ty.winchat.widget.LocalVideoView;
 import com.ty.winchat.widget.VideoView;
 
 import java.io.IOException;
@@ -52,12 +53,14 @@ public class VideoChat extends Base implements
 
 	private TCPVideoReceiveListener videoReceiveListener;
 	private UDPVoiceListener voiceListener;
+	private LocalVideoView mLocalVideoView;
 
 	private boolean stop;//标识activity被遮挡
 
 	private Handler handler=new Handler(){
 		public void handleMessage(android.os.Message msg) {
-			myView.setBitmap((Bitmap)msg.obj);
+//			myView.setBitmap((Bitmap)msg.obj);
+			mLocalVideoView.setBitmap((Bitmap)msg.obj);
 		};
 	};
 
@@ -109,7 +112,8 @@ public class VideoChat extends Base implements
 		surfaceHolder=surfaceView.getHolder();
 		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		surfaceHolder.addCallback(this);
-		myView=(VideoView) findViewById(R.id.video_chat_myview);
+//		myView=(VideoView) findViewById(R.id.video_chat_myview);
+		mLocalVideoView=(LocalVideoView) findViewById(R.id.video_chat_myview);
 		TextView topTitle=(TextView) findViewById(R.id.toptextView);
 		topTitle.setText(getIntent().getStringExtra("name"));
 	}

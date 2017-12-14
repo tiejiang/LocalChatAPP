@@ -8,7 +8,7 @@
     <include layout="@layout/head"/>
     
    
-     <com.ty.winchat.widget.VideoView
+     <com.ty.winchat.widget.LocalVideoView
         android:id="@+id/video_chat_myview"
         android:layout_width="match_parent"
         android:layout_height="0dip"
