@@ -1,6 +1,10 @@
 package com.ty.winchat.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,15 +12,20 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Size;
 
 import com.ty.winchat.R;
 import com.ty.winchat.listener.TCPVideoReceiveListener;
 import com.ty.winchat.listener.UDPVoiceListener;
 import com.ty.winchat.listener.inter.OnBitmapLoaded;
 import com.ty.winchat.util.Constant;
+import com.ty.winchat.util.Util;
 import com.ty.winchat.widget.VideoView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -32,7 +41,7 @@ import java.util.concurrent.Executors;
  */
 public class VideoChat extends Base implements
 		SurfaceHolder.Callback,
-// Camera.PreviewCallback,
+ 		Camera.PreviewCallback,
 		OnBitmapLoaded{
 
 	private SurfaceHolder surfaceHolder;
@@ -101,7 +110,6 @@ public class VideoChat extends Base implements
 				}
 			}
 		}).start();
-
 	}
 
 	private void findViews(){
@@ -120,46 +128,47 @@ public class VideoChat extends Base implements
 		super.onPause();
 	}
 
-//	@Override
-//	public void onPreviewFrame(final byte[] data, final Camera camera) {
-//		executors.execute(new Runnable() {
-//			@Override
-//			public void run() {
-//				try {
-//					Socket socket=new Socket(InetAddress.getByName(chatterIP), port);
-//					OutputStream out=socket.getOutputStream();
-//
-//					YuvImage image = new YuvImage(data, PreviewFormat, w, h, null);
-//					ByteArrayOutputStream os = new ByteArrayOutputStream();
-//					Rect rect=new Rect(0, 0, w, h);
-//					//1：将YUV数据格式转化成jpeg
-//					if(!image.compressToJpeg(rect, 100, os))  return ;
-//
-//					//2：将得到的字节数组压缩成bitmap
-//					Bitmap bmp = Util.decodeVideoBitmap(os.toByteArray(), 200);
-////		            Bitmap bmp = Util.decodeSampledBitmapFromFile(os.toByteArray(), 200, 200);
-////		           Bitmap bmp=BitmapFactory.decodeByteArray(data, offset, length, opts)
-//					Matrix matrix=new Matrix();
-//					matrix.setRotate(-90);
-////		            matrix.postScale(2.0f, 2.0f);
-//					//3：旋转90
-//					bmp=Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-//					//4：将最后的bitmap转化为字节流发送
-//					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//					bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//					out.write(baos.toByteArray());  // modified by tiejiang 201712111038
-//					out.flush();
-//					out.close();
-//					socket.close();
-//				}  catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	@Override
+	public void onPreviewFrame(final byte[] data, final Camera camera) {
+		executors.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Socket socket=new Socket(InetAddress.getByName(chatterIP), port);
+					OutputStream out=socket.getOutputStream();
+
+					YuvImage image = new YuvImage(data, PreviewFormat, w, h, null);
+					ByteArrayOutputStream os = new ByteArrayOutputStream();
+					Rect rect=new Rect(0, 0, w, h);
+					//1：将YUV数据格式转化成jpeg
+					if(!image.compressToJpeg(rect, 100, os))  return ;
+
+					//2：将得到的字节数组压缩成bitmap
+					Bitmap bmp = Util.decodeVideoBitmap(os.toByteArray(), 200);
+//		            Bitmap bmp = Util.decodeSampledBitmapFromFile(os.toByteArray(), 200, 200);
+//		           Bitmap bmp=BitmapFactory.decodeByteArray(data, offset, length, opts)
+					Matrix matrix=new Matrix();
+					matrix.setRotate(-90);
+//		            matrix.postScale(2.0f, 2.0f);
+					//3：旋转90
+					bmp=Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+					//4：将最后的bitmap转化为字节流发送
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+					out.write(baos.toByteArray());
+					out.flush();
+					out.close();
+					socket.close();
+				}  catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	@Override
 	public void onBitmapLoaded(Bitmap bitmap) {
+
 		handler.sendMessage(handler.obtainMessage(REFRESH, bitmap));
 		if(stop){
 			try {
@@ -178,24 +187,25 @@ public class VideoChat extends Base implements
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-//		int cameras=Camera.getNumberOfCameras();
-//		CameraInfo info=new CameraInfo();
-//		for(int i=0;i<cameras;i++){
-//			Camera.getCameraInfo(i, info);
-//			if(info.facing==CameraInfo.CAMERA_FACING_FRONT){
-//				camera=Camera.open(i);
-//				break;
-//			}
-//		}
-//		//没有前置摄像头
-//		if(camera==null) camera=Camera.open();
-//		try {
-//			camera.setPreviewDisplay(surfaceHolder);
-//			camera.setPreviewCallback(this);
-//		} catch (Exception e) {
-//			camera.release();//释放资源
-//			camera=null;
-//		}
+
+		int cameras=Camera.getNumberOfCameras();
+		CameraInfo info=new CameraInfo();
+		for(int i=0;i<cameras;i++){
+			Camera.getCameraInfo(i, info);
+			if(info.facing==CameraInfo.CAMERA_FACING_FRONT){
+				camera=Camera.open(i);
+				break;
+			}
+		}
+		//没有前置摄像头
+		if(camera==null) camera=Camera.open();
+		try {
+			camera.setPreviewDisplay(surfaceHolder);
+			camera.setPreviewCallback(this);
+		} catch (Exception e) {
+			camera.release();//释放资源
+			camera=null;
+		}
 	}
 
 
@@ -204,13 +214,13 @@ public class VideoChat extends Base implements
 	int PreviewFormat;
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,int height) {
-//		Camera.Parameters parameters=camera.getParameters();//得到相机设置参数
-//		Size size = camera.getParameters().getPreviewSize(); //获取预览大小
-//		w=size.width;
-//		h=size.height;
-//		parameters.setPictureFormat(PixelFormat.JPEG);//设置图片格式
-//		PreviewFormat=parameters.getPreviewFormat();
-//		setDisplayOrientation(camera, 90);
+		Camera.Parameters parameters=camera.getParameters();//得到相机设置参数
+		Size size = camera.getParameters().getPreviewSize(); //获取预览大小 （帧数据的尺寸）
+		w=size.width;
+		h=size.height;
+		parameters.setPictureFormat(PixelFormat.JPEG);//设置图片格式
+		PreviewFormat=parameters.getPreviewFormat();
+		setDisplayOrientation(camera, 90);
 
 
 //		 if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
@@ -226,9 +236,9 @@ public class VideoChat extends Base implements
 //		    }
 
 
-//		camera.setPreviewCallback(this);
-//		camera.setParameters(parameters);
-//		camera.startPreview();//开始预览
+		camera.setPreviewCallback(this);
+		camera.setParameters(parameters);
+		camera.startPreview();//开始预览
 	}
 
 
