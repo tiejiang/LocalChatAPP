@@ -19,7 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 
 public class Util {
 	/** 
-	 * ¼ÆËãsdcardÉÏµÄÊ£Óà¿Õ¼ä 
+	 * ï¿½ï¿½ï¿½ï¿½sdcardï¿½Ïµï¿½Ê£ï¿½ï¿½Õ¼ï¿½ 
 	 * @return 
 	 */ 
 	public static  long freeSpaceOnSd() { 
@@ -29,7 +29,7 @@ public class Util {
 	}
 	
 	/**
-	 * ¼ÆËãËõÂÔÍ¼Ñ¹ËõµÄ±ÈÁÐ£¬ÒòÎªÃ¿ÕÅÍ¼Æ¬³¤¿í²»Ò»Ñù£¬Ñ¹Ëõ±ÈÁÐÒ²²»Ò»Ñù
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Ñ¹ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ÎªÃ¿ï¿½ï¿½Í¼Æ¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ò»ï¿½ï¿½
 	 * @param options
 	 * @param reqWidth
 	 * @param reqHeight
@@ -56,7 +56,7 @@ public class Util {
     }  
     
     /**
-     * µÃµ½Ñ¹ËõÍ¼Æ¬
+     * ï¿½Ãµï¿½Ñ¹ï¿½ï¿½Í¼Æ¬
      * @param data
      * @param reqWidth
      * @param reqHeight
@@ -79,7 +79,7 @@ public class Util {
     
     
     /**
-     * µÃµ½Ñ¹ËõÍ¼Æ¬
+     * ï¿½Ãµï¿½Ñ¹ï¿½ï¿½Í¼Æ¬
      * @param data
      * @param reqWidth
      * @param reqHeight
@@ -87,13 +87,14 @@ public class Util {
      */
     public static Bitmap decodeVideoBitmap(byte[] data,int reqHeight) {  
     	BitmapFactory.Options options = new BitmapFactory.Options();  
-    	options.inSampleSize = 6 ;
+//    	options.inSampleSize = 6 ;
+		options.inSampleSize = 3 ;
     	options.inJustDecodeBounds = false;  
     	return BitmapFactory.decodeByteArray(data, 0, data.length, options);
     }  
     
     /**
-	 * Òþ²ØÈí¼üÅÌ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	public static void hideSoftInput(Context context) {
 		if (context == null)
@@ -108,7 +109,7 @@ public class Util {
 
 	}
 	
-    //Éú³ÉÔ²½ÇÍ¼Æ¬  
+    //ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½Í¼Æ¬  
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {  
         try {  
             Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),  
@@ -137,7 +138,7 @@ public class Util {
     }  
     
     /**
-	 * ¿ìËÙÅÅÐò·¨
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @param array
 	 * @param begin
 	 * @param end
@@ -149,8 +150,8 @@ public class Util {
 				pos=(end-begin+1)/2;
 			else
 				pos=(end+begin+1)/2;
-			int posValue=array[pos];//»ñÈ¡ÖÐ¼äÖµ
-			swap(array,pos,end); //½«posvalue·Åµ½×îendµÄÎ»ÖÃ  
+			int posValue=array[pos];//ï¿½ï¿½È¡ï¿½Ð¼ï¿½Öµ
+			swap(array,pos,end); //ï¿½ï¿½posvalueï¿½Åµï¿½ï¿½ï¿½endï¿½ï¿½Î»ï¿½ï¿½  
 			pos=begin;
 			for(int i=begin;i<end;i++){
 				if(array[i]<posValue){
@@ -172,7 +173,7 @@ public class Util {
     } 
 	
     /**
-     * Ê¹ÓÃJavaÓïÑÔÊµÏÖµÄÍ¼Ïñ×ªÂë·½·¨
+     * Ê¹ï¿½ï¿½Javaï¿½ï¿½ï¿½ï¿½Êµï¿½Öµï¿½Í¼ï¿½ï¿½×ªï¿½ë·½ï¿½ï¿½
      * @param rgb
      * @param yuv420sp
      * @param width

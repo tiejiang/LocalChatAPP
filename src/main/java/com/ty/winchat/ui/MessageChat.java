@@ -245,7 +245,9 @@ public class MessageChat extends Base implements OnClickListener,OnProgressUpdat
 				sendBroadcast(new Intent(Main.ACTION_ADD_USER));
 			}
 			try {
-				if(chatter!=null&&chatterDeviceCode.equals(chatter.getDeviceCode()))
+				if(chatter!=null
+//						&&chatterDeviceCode.equals(chatter.getDeviceCode())
+						)
 					binder.sendMsg(msg, InetAddress.getByName(chatterIP));
 				if(Listener.RECEIVE_MSG==Integer.valueOf(msg.getType()))//如果是文本消息
 					myMessages.add(msg);
@@ -678,7 +680,7 @@ public class MessageChat extends Base implements OnClickListener,OnProgressUpdat
 			}else {
 				chatter=binder.getUsers().get(chatterIP);
 			}
-			chatterDeviceCode=chatter.getDeviceCode();
+//			chatterDeviceCode=chatter.getDeviceCode();
 			Queue<UDPMessage> queue=binder.getMessages().get(chatter.getIp());
 			listView.setAdapter(adapter=new ChatAdapter());
 			if(queue!=null){//从后台遍历读取数据

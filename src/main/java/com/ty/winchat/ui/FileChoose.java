@@ -28,7 +28,7 @@ import com.ty.winchat.WinChatApplication;
 import com.ty.winchat.util.FileUtil;
 import com.ty.winchat.util.WinChatUtil;
 /**
- * ÎÄ¼şÑ¡Ôñ
+ * æ–‡ä»¶é€‰æ‹©
  * @author wj
  * @creation 2013-6-6
  */
@@ -39,14 +39,14 @@ public class FileChoose extends Base{
 	private FileAdapter adapter;
 	private String rootPath;
 	private RelativeLayout noFileLayout;
-	
+
 	private PopupWindow popupWindow;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(!WinChatApplication.hasSDcard()){
-			Toast.makeText(this, "Ã»ÓĞSD¿¨", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "æ²¡æœ‰SDå¡", Toast.LENGTH_SHORT).show();
 			finish();
 		}
 		setContentView(R.layout.file_choose);
@@ -55,7 +55,7 @@ public class FileChoose extends Base{
 		rootPath=Environment.getExternalStorageDirectory().getPath();
 		path.setText(rootPath);
 	}
-	
+
 	private void findViews(){
 		listView=(ListView) findViewById(R.id.file_choose_listview);
 		path=(TextView) findViewById(R.id.file_choose_path);
@@ -81,18 +81,18 @@ public class FileChoose extends Base{
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
+										   int position, long arg3) {
 				File file=(File) listView.getItemAtPosition(position);
 				showOperateDialog(file);
 				return false;
 			}
 		});
 	}
-	
-	
-	
+
+
+
 	/**
-	 * ÏÔÊ¾ÌáĞÑ¿ò
+	 * æ˜¾ç¤ºæé†’æ¡†
 	 * @param txt
 	 * @param ok
 	 */
@@ -102,7 +102,7 @@ public class FileChoose extends Base{
 		popupWindow.setHeight(LayoutParams.WRAP_CONTENT);
 		popupWindow.setFocusable(true);
 		popupWindow.setOutsideTouchable(true);
-		popupWindow.setBackgroundDrawable(new BitmapDrawable());// Õâ¸öÊÇÎªÁËµã»÷¡°·µ»ØBack¡±Ò²ÄÜÊ¹ÆäÏûÊ§£¬²¢ÇÒ²¢²»»áÓ°ÏìÄãµÄ±³¾°
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());// è¿™ä¸ªæ˜¯ä¸ºäº†ç‚¹å‡»â€œè¿”å›Backâ€ä¹Ÿèƒ½ä½¿å…¶æ¶ˆå¤±ï¼Œå¹¶ä¸”å¹¶ä¸ä¼šå½±å“ä½ çš„èƒŒæ™¯
 		View view= getLayoutInflater().inflate(R.layout.file_operate_dialog, null);
 		TextView title=(TextView) view.findViewById(R.id.file_operate_dialog_title);
 		ListView listView=(ListView) view.findViewById(R.id.file_operate_dialog_listview);
@@ -111,14 +111,14 @@ public class FileChoose extends Base{
 		popupWindow.setContentView(view);
 		popupWindow.showAtLocation(this.listView, Gravity.CENTER, 0, 0);
 	}
-	
+
 	private void closeOperateDialog(){
 		if(popupWindow!=null){
 			popupWindow.dismiss();
 			popupWindow=null;
 		}
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(keyCode==KeyEvent.KEYCODE_BACK){
@@ -132,16 +132,16 @@ public class FileChoose extends Base{
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	private class FileOperateAdapter extends BaseAdapter{
-		String [] operate={"ä¯ÀÀ","É¾³ı"};
+		String [] operate={"æµè§ˆ","åˆ é™¤"};
 		File myFile;
-		
+
 		public FileOperateAdapter(File file){
 			this.myFile=file;
 		}
-		
-		
+
+
 		@Override
 		public int getCount() {
 			return operate.length;
@@ -170,7 +170,7 @@ public class FileChoose extends Base{
 			}
 			holder.name.setText(operate[position]);
 			if(myFile!=null){
-				if(position==0){//ä¯ÀÀ
+				if(position==0){//æµè§ˆ
 					holder.name.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -184,7 +184,7 @@ public class FileChoose extends Base{
 							}
 						}
 					});
-				}else if(position==1){//É¾³ı
+				}else if(position==1){//åˆ é™¤
 					holder.name.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -200,7 +200,7 @@ public class FileChoose extends Base{
 			return convertView;
 		}
 	}
-	
+
 	private class FileAdapter extends BaseAdapter{
 
 		@Override
@@ -250,7 +250,7 @@ public class FileChoose extends Base{
 			return convertView;
 		}
 	}
-	
+
 	class ViewHolder{
 		ImageView img;
 		TextView name;

@@ -6,14 +6,15 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Size;
 
 import com.ty.winchat.R;
 import com.ty.winchat.listener.TCPVideoReceiveListener;
@@ -130,6 +131,8 @@ public class VideoChat extends Base implements
 
 	@Override
 	public void onPreviewFrame(final byte[] data, final Camera camera) {
+
+		Log.d("TIEJIANG", "VideoChat---onPreviewFrame");
 		executors.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -141,24 +144,32 @@ public class VideoChat extends Base implements
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					Rect rect=new Rect(0, 0, w, h);
 					//1：将YUV数据格式转化成jpeg
+//					if(!image.compressToJpeg(rect, 100, os))  return ;
 					if(!image.compressToJpeg(rect, 100, os))  return ;
-
 					//2：将得到的字节数组压缩成bitmap
 					Bitmap bmp = Util.decodeVideoBitmap(os.toByteArray(), 200);
 //		            Bitmap bmp = Util.decodeSampledBitmapFromFile(os.toByteArray(), 200, 200);
 //		           Bitmap bmp=BitmapFactory.decodeByteArray(data, offset, length, opts)
 					Matrix matrix=new Matrix();
-					matrix.setRotate(-90);
+//					matrix.setRotate(-90);
+					matrix.setRotate(0);
 //		            matrix.postScale(2.0f, 2.0f);
 					//3：旋转90
 					bmp=Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 					//4：将最后的bitmap转化为字节流发送
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//					bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+					bmp.compress(Bitmap.CompressFormat.JPEG, 80, baos);
 					out.write(baos.toByteArray());
 					out.flush();
 					out.close();
 					socket.close();
+//					Log.d("TIEJIANG", "VideoChat---onPreviewFrame");
+//					try {
+//						Thread.sleep(100);
+//					}catch (InterruptedException e){
+//						e.printStackTrace();
+//					}
 				}  catch (IOException e) {
 					e.printStackTrace();
 				}

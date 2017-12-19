@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.ty.winchat.ui.MessageChat.MessageUpdateBroadcastReceiver;
 /**
- * 心跳包检测，只检测通信双方
+ * 蹇冭烦鍖呮娴嬶紝鍙娴嬮�氫俊鍙屾柟
  * @author wj
  * @creation 2013-5-9
  */
