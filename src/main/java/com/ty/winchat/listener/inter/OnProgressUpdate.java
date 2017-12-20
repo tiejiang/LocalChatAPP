@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * ½ø¶ÈÌõ°Ù·Ö±È´«½øUI½çÃæµÄ½Ó¿Ú
+ * è¿›åº¦æ¡ç™¾åˆ†æ¯”ä¼ è¿›UIç•Œé¢çš„æ¥å£
  */
 public interface OnProgressUpdate {
-	 void onSendProgressIncrease(double per,String filePath);
-	 void onReceiveProgressIncrease(double per,String filePath);
-	 void onReceiveSucc(File file);
-	 void onSendSucc(File file);
-	 void onReceiveFailure(IOException e);
-	 void onSendFailure(IOException e);
+	void onSendProgressIncrease(double per,String filePath);
+	void onReceiveProgressIncrease(double per,String filePath);
+	void onReceiveSucc(File file);
+	void onSendSucc(File file);
+	void onReceiveFailure(IOException e);
+	void onSendFailure(IOException e);
 }

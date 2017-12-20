@@ -3,12 +3,12 @@ package com.ty.winchat.listener.inter;
 import java.io.File;
 
 public interface OnTCPReceive {
-	/**½ÓÊÕµ½ÎÄ¼ş µÄ»Øµ÷·½·¨*/
+	/**æ¥æ”¶åˆ°æ–‡ä»¶ çš„å›è°ƒæ–¹æ³•*/
 	void onReceiveFileSucc(File file);
-	/**·¢ËÍÎÄ¼ş µÄ»Øµ÷·½·¨*/
+	/**å‘é€æ–‡ä»¶ çš„å›è°ƒæ–¹æ³•*/
 	void onSendFileSucc(File file);
-	/**·µ»Ø·¢ËÍÎÄ¼ş½ø¶ÈÌõµÄ°Ù·Ö±È*/
+	/**è¿”å›å‘é€æ–‡ä»¶è¿›åº¦æ¡çš„ç™¾åˆ†æ¯”*/
 	void onSendProgressIncrease(double percent,String filePath);
-	/**·µ»Ø½ÓÊÕ½ø¶ÈÌõµÄ°Ù·Ö±È*/
+	/**è¿”å›æ¥æ”¶è¿›åº¦æ¡çš„ç™¾åˆ†æ¯”*/
 	void onReceiveProgressIncrease(double percent,String filePath);
 }

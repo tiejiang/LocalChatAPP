@@ -1,5 +1,13 @@
 package com.ty.winchat.listener;
 
+import android.util.Log;
+
+import com.ty.winchat.WinChatApplication;
+import com.ty.winchat.listener.inter.IconReceived;
+import com.ty.winchat.listener.inter.OnProgressUpdate;
+import com.ty.winchat.listener.inter.OnTCPReceive;
+import com.ty.winchat.util.Constant;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,16 +21,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.util.Log;
-
-import com.ty.winchat.WinChatApplication;
-import com.ty.winchat.listener.inter.IconReceived;
-import com.ty.winchat.listener.inter.OnProgressUpdate;
-import com.ty.winchat.listener.inter.OnTCPReceive;
-import com.ty.winchat.util.Constant;
-
 /**
- * ÎÄ¼ş´«Êä¼àÌıÆ÷
+ * æ–‡ä»¶ä¼ è¾“ç›‘å¬å™¨
  * @author wj
  * @creation 2013-5-7
  */
@@ -30,66 +30,66 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 
 	private int port=Constant.FILE_PORT;
 	public static TCPFileListener instance;
-	
+
 	private OnProgressUpdate onProgressUpdate;
 	private IconReceived iconReceived;
-	//ÓÃÀ´·¢Êı¾İ
-	private Socket sendClient;	
-	
+	//ç”¨æ¥å‘æ•°æ®
+	private Socket sendClient;
+
 	ExecutorService executor=Executors.newFixedThreadPool(5);
-	private Map<String, Integer> receiveCountMap=new HashMap<String, Integer>();//ÓÃÀ´±£´æµ±Ç°´«ËÍÎÄ¼şµÄ½ÓÊÕ×Ö½ÚÊı
-	
+	private Map<String, Integer> receiveCountMap=new HashMap<String, Integer>();//ç”¨æ¥ä¿å­˜å½“å‰ä¼ é€æ–‡ä»¶çš„æ¥æ”¶å­—èŠ‚æ•°
+
 	private TCPFileListener(){}
-	
+
 	public static TCPFileListener getInstance(){
 		return instance==null?instance=new TCPFileListener():instance;
 	}
-	
+
 	@Override
 	public void onReceiveFileSucc(File file) {
 		if(onProgressUpdate!=null)
-		  	onProgressUpdate.onReceiveSucc(file);
+			onProgressUpdate.onReceiveSucc(file);
 	}
-	
+
 	@Override
 	public void onSendFileSucc(File file) {
 		if(onProgressUpdate!=null)
-		  	onProgressUpdate.onSendSucc(file);
+			onProgressUpdate.onSendSucc(file);
 	}
 
 	@Override
 	void init() {
 		setPort(port);
 	}
-	
+
 	@Override
 	public void onReceiveData(Socket socket) throws IOException {
 		InputStream in=socket.getInputStream();
-		
-		byte[] name=new byte[100];//ÓÃÀ´´æ´¢Í·ĞÅÏ¢
-		byte[] byteCount=new byte[20];//ÓÃÀ´´æ´¢ÎÄ¼ş³¤¶È
-		byte[] filePath=new byte[200];//ÓÃÀ´±£´æÎÄ¼ş´æ´¢Â·¾¶
-		
+
+		byte[] name=new byte[100];//ç”¨æ¥å­˜å‚¨å¤´ä¿¡æ¯
+		byte[] byteCount=new byte[20];//ç”¨æ¥å­˜å‚¨æ–‡ä»¶é•¿åº¦
+		byte[] filePath=new byte[200];//ç”¨æ¥ä¿å­˜æ–‡ä»¶å­˜å‚¨è·¯å¾„
+
 		in.read(name, 0, name.length);
 		in.read(byteCount, 0, byteCount.length);
 		in.read(filePath,0,filePath.length);
-		
-		String fileName=new String(name).trim();//µÃµ½ÎÄ¼şÃû
+
+		String fileName=new String(name).trim();//å¾—åˆ°æ–‡ä»¶å
 		long fileSize=Long.valueOf(new String(byteCount).trim());
-		String filedir=new String(filePath).trim();//µÃµ½ÎÄ¼ş±£´æÂ·¾¶
-		
-		if(fileName==null ) throw new IOException("Î´½ÓÊÕµ½ÎÄ¼şÃû");
-		if(filedir==null ) throw new IOException("Î´½ÓÊÕµ½ÎÄ¼ş´æ´¢Â·¾¶");
-		if(fileSize<0) throw new IOException("ÎÄ¼ş³¤¶ÈĞ¡ÓÚ0");
-		
+		String filedir=new String(filePath).trim();//å¾—åˆ°æ–‡ä»¶ä¿å­˜è·¯å¾„
+
+		if(fileName==null ) throw new IOException("æœªæ¥æ”¶åˆ°æ–‡ä»¶å");
+		if(filedir==null ) throw new IOException("æœªæ¥æ”¶åˆ°æ–‡ä»¶å­˜å‚¨è·¯å¾„");
+		if(fileSize<0) throw new IOException("æ–‡ä»¶é•¿åº¦å°äº0");
+
 		File file;
 		if(filedir.indexOf("com.ty")==-1){
 			file=new File(WinChatApplication.mainInstance.getFilePath()+fileName);
 		}else {
 			file=new File(filedir+fileName);
-			file.delete();//É¾³ıÔ­À´µÄÍ·ÏñÍ¼Æ¬
+			file.delete();//åˆ é™¤åŸæ¥çš„å¤´åƒå›¾ç‰‡
 		}
-		
+
 		if(!file.exists())
 			file.createNewFile();
 		FileOutputStream out=new FileOutputStream(file,true);
@@ -100,8 +100,8 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 			receiveCount=0;
 			receiveCountMap.put(file.getName(), receiveCount);
 		}
-		
-		while((len=in.read(data))!=-1){//¶ÁÈ¡×Ö½Ú
+
+		while((len=in.read(data))!=-1){//è¯»å–å­—èŠ‚
 			out.write(data, 0, len);
 			receiveCount+=len;
 			onReceiveProgressIncrease(receiveCount*100./fileSize,file.getPath());
@@ -111,31 +111,31 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 		out.close();
 		in.close();
 		socket.close();
-//		Log.d("==========", "½ÓÊÕ×Ö½Ú£º"+receiveCount);
+//		Log.d("==========", "æ¥æ”¶å­—èŠ‚ï¼š"+receiveCount);
 		if(receiveCount==fileSize)
 			onReceiveFileSucc(file);
 		if(WinChatApplication.iconPath.equals(filedir)&&iconReceived!=null)
 			iconReceived.iconReceived(fileName);
 	}
 
-	
+
 	/**
-	 * ·¢ËÍÎÄ¼ş
-	 * @param dstName  Ä¿µÄip
-	 * @param file  ÎÄ¼ş¶ÔÏó
-	 * @param filePath	Ä¿µÄÎÄ¼ş±£´æÂ·¾¶
-	 * @param specifyFileName  Ä¿µÄÖ¸¶¨±£´æÃû×Ö£¬Îª¿ÕÔò±£´æfileÃû×Ö
+	 * å‘é€æ–‡ä»¶
+	 * @param dstName  ç›®çš„ip
+	 * @param file  æ–‡ä»¶å¯¹è±¡
+	 * @param filePath	ç›®çš„æ–‡ä»¶ä¿å­˜è·¯å¾„
+	 * @param specifyFileName  ç›®çš„æŒ‡å®šä¿å­˜åå­—ï¼Œä¸ºç©ºåˆ™ä¿å­˜fileåå­—
 	 */
 	public void sendFile(final String dstName,final File file,final String filePath,final String specifyFileName)   {
 		executor.execute(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					byte nullByte=32;//´ú±í¿Õ¸ñ×Ö·û´Ü
-					//×Ô¶¨ÒåÍ·ĞÅÏ¢£¬³¤¶ÈÎª120¸ö×Ö½Ú£¬
-					byte[] head=new byte[100];//100×Ö½ÚÓÃÀ´´æ·ÅÎÄ¼şÃû
-					byte[] fileLength=new byte[20];//20×Ö½Ú´æ·ÅÎÄ¼ş³¤¶È
-					byte[] filep=new byte[200];//200×Ö½Ú´æ·ÅÎÄ¼ş´æ´¢Â·¾¶
+					byte nullByte=32;//ä»£è¡¨ç©ºæ ¼å­—ç¬¦çªœ
+					//è‡ªå®šä¹‰å¤´ä¿¡æ¯ï¼Œé•¿åº¦ä¸º120ä¸ªå­—èŠ‚ï¼Œ
+					byte[] head=new byte[100];//100å­—èŠ‚ç”¨æ¥å­˜æ”¾æ–‡ä»¶å
+					byte[] fileLength=new byte[20];//20å­—èŠ‚å­˜æ”¾æ–‡ä»¶é•¿åº¦
+					byte[] filep=new byte[200];//200å­—èŠ‚å­˜æ”¾æ–‡ä»¶å­˜å‚¨è·¯å¾„
 					for(int i=0;i<head.length;i++){
 						head[i]=nullByte;
 					}
@@ -148,31 +148,31 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 					String temp=file.getName();
 					if(specifyFileName!=null)
 						temp=specifyFileName;
-					if(temp.length()>50){//Ò»¸öÖĞÎÄÕ¼2¸ö×Ö½Ú
-						throw new IOException("ÎÄ¼şÃû¹ı³¤");
+					if(temp.length()>50){//ä¸€ä¸ªä¸­æ–‡å 2ä¸ªå­—èŠ‚
+						throw new IOException("æ–‡ä»¶åè¿‡é•¿");
 					}else {
 						byte[] name=temp.getBytes();
-						System.arraycopy(name, 0, head, 0, name.length);//½«ÎÄ¼şÃû·Å½ø×Ô¶¨ÒåµÄÍ·ĞÅÏ¢ÖĞ
+						System.arraycopy(name, 0, head, 0, name.length);//å°†æ–‡ä»¶åæ”¾è¿›è‡ªå®šä¹‰çš„å¤´ä¿¡æ¯ä¸­
 					}
-					
+
 					long length=file.length();
 					byte[] leng=(length+"").getBytes();
-					System.arraycopy(leng, 0, fileLength, 0, leng.length);//½«ÎÄ¼ş³¤¶È·Å½øÍ·ĞÅÏ¢
-					
+					System.arraycopy(leng, 0, fileLength, 0, leng.length);//å°†æ–‡ä»¶é•¿åº¦æ”¾è¿›å¤´ä¿¡æ¯
+
 					byte[] l=filePath.getBytes();
 					System.arraycopy(l, 0, filep, 0,l.length);
-					//TODO  
-					/*ÏÂÃæÒ»´ÎsocketÁ¬½ÓÖ»·¢ËÍbufferSize´óĞ¡µÄÊı¾İ£¬³¬³öÁË»áÖØÁ¬¼ÌĞø·¢ËÍÏÂÒ»ÅúÊı¾İ
-					 * Õâ²ßÂÔ²»ºÃ£¬socketÓ¦¸ÃÖ»Á¬½ÓÒ»´Î½«ËùÓĞÊı¾İ·¢ËÍÍê±Ï,µÈ´ıĞŞ¸Ä
+					//TODO
+					/*ä¸‹é¢ä¸€æ¬¡socketè¿æ¥åªå‘é€bufferSizeå¤§å°çš„æ•°æ®ï¼Œè¶…å‡ºäº†ä¼šé‡è¿ç»§ç»­å‘é€ä¸‹ä¸€æ‰¹æ•°æ®
+					 * è¿™ç­–ç•¥ä¸å¥½ï¼Œsocketåº”è¯¥åªè¿æ¥ä¸€æ¬¡å°†æ‰€æœ‰æ•°æ®å‘é€å®Œæ¯•,ç­‰å¾…ä¿®æ”¹
 					 */
-					long bufferSize=1024*88*4;//Ò»´ÎĞÔ·¢ËÍ352k×Ö½Ú£¬²âÊÔ·¢ÏÖ×î¶à400k²»µ½µã
-					int socketNum=1;//·¢ËÍµÄsocket´ÎÊı£¬Ä¬ÈÏ1´Î
-					if(length>bufferSize){//ÎÄ¼ş³¤¶È´óÓÚÒ»´ÎĞÔ·¢ËÍµÄ×Ö½Ú´óĞ¡£¬Ôò×¼±¸·ÖÅú´«ËÍ
+					long bufferSize=1024*88*4;//ä¸€æ¬¡æ€§å‘é€352kå­—èŠ‚ï¼Œæµ‹è¯•å‘ç°æœ€å¤š400kä¸åˆ°ç‚¹
+					int socketNum=1;//å‘é€çš„socketæ¬¡æ•°ï¼Œé»˜è®¤1æ¬¡
+					if(length>bufferSize){//æ–‡ä»¶é•¿åº¦å¤§äºä¸€æ¬¡æ€§å‘é€çš„å­—èŠ‚å¤§å°ï¼Œåˆ™å‡†å¤‡åˆ†æ‰¹ä¼ é€
 						BigDecimal a = new BigDecimal(length);
 						BigDecimal b = new BigDecimal(bufferSize);
-						socketNum = a.divide(b,BigDecimal.ROUND_UP).intValue();//´ÕÕû
+						socketNum = a.divide(b,BigDecimal.ROUND_UP).intValue();//å‡‘æ•´
 					}
-					Log.d("TCPListener", "¿ªÊ¼·¢ËÍÎÄ¼ş£¬×Ü´óĞ¡:"+length);
+					Log.d("TCPListener", "å¼€å§‹å‘é€æ–‡ä»¶ï¼Œæ€»å¤§å°:"+length);
 					FileInputStream in=new FileInputStream(file);
 					byte[] data=new byte[1024*4];
 					int len;
@@ -180,43 +180,43 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 					for(int i=0;i<socketNum;i++){
 						sendClient=new Socket(dstName, port);
 						OutputStream out=sendClient.getOutputStream();
-						out.write(head);//Ğ´½øÍ·ĞÅÏ¢
+						out.write(head);//å†™è¿›å¤´ä¿¡æ¯
 						out.write(fileLength);
 						out.write(filep);
 						while((len=in.read(data))!=-1){
 							out.write(data, 0, len);
 							sendCount+=len;
 							onSendProgressIncrease(sendCount*100./length,file.getPath());
-							Log.d("TCPListener", "·¢ËÍ×Ö½Ú£º"+sendCount);
+							Log.d("TCPListener", "å‘é€å­—èŠ‚ï¼š"+sendCount);
 							if(sendCount%bufferSize==0){
-								break;//½áÊøµ±Ç°·¢ËÍ£¬×¼±¸ÏÂÒ»Åú
+								break;//ç»“æŸå½“å‰å‘é€ï¼Œå‡†å¤‡ä¸‹ä¸€æ‰¹
 							}
 						}
 						out.flush();
 						out.close();
 						sendClient.close();
 					}
-					in.close();//×îºó¹Ø±Õ
+					in.close();//æœ€åå…³é—­
 					onSendFileSucc(file);
-					Log.d("TCPListener", "·¢ËÍÎÄ¼ş½áÊø");
+					Log.d("TCPListener", "å‘é€æ–‡ä»¶ç»“æŸ");
 				} catch (IOException e) {
 					e.printStackTrace();
 					noticeSendFileError(e);
 				}
-				
+
 			}
 		});
-		
+
 	}
 
 	@Override
 	public void noticeReceiveError(IOException e) {
-		
+
 	}
-	
+
 	@Override
 	public void noticeSendFileError(IOException e) {
-		
+
 	}
 
 	@Override
@@ -224,27 +224,27 @@ public class TCPFileListener extends TCPListener  implements OnTCPReceive{
 		super.close();
 		instance=null;
 	}
-	
+
 
 	public OnProgressUpdate getOnProgressUpdate() {
-  	return onProgressUpdate;
-  }
+		return onProgressUpdate;
+	}
 
 	public void setOnProgressUpdate(OnProgressUpdate onProgressUpdate) {
-  	this.onProgressUpdate = onProgressUpdate;
-  }
+		this.onProgressUpdate = onProgressUpdate;
+	}
 
 	@Override
-  public void onSendProgressIncrease(double percent,String filePath) {
-	  if(onProgressUpdate!=null)
-	  	onProgressUpdate.onSendProgressIncrease(percent,filePath);
-  }
-
-	@Override
-  public void onReceiveProgressIncrease(double percent,String filePath) {
+	public void onSendProgressIncrease(double percent,String filePath) {
 		if(onProgressUpdate!=null)
-	  	onProgressUpdate.onReceiveProgressIncrease(percent,filePath);
-  }
+			onProgressUpdate.onSendProgressIncrease(percent,filePath);
+	}
+
+	@Override
+	public void onReceiveProgressIncrease(double percent,String filePath) {
+		if(onProgressUpdate!=null)
+			onProgressUpdate.onReceiveProgressIncrease(percent,filePath);
+	}
 
 	public IconReceived getIconReceived() {
 		return iconReceived;

@@ -1,22 +1,5 @@
 package com.ty.winchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Queue;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -33,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -66,6 +50,23 @@ import com.ty.winchat.util.FileUtil;
 import com.ty.winchat.util.LocalMemoryCache;
 import com.ty.winchat.util.Util;
 import com.ty.winchat.util.WinChatUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Queue;
 /**
  * 文本消息聊天
  * @author wj
@@ -655,12 +656,16 @@ public class MessageChat extends Base implements OnClickListener,OnProgressUpdat
 						FileMessage fileMessage=new FileMessage(new JSONObject(msg));
 						if(FileMessage.ALLOW_SEND_FILE.equals(fileMessage.getAllow())){//同意发送文件
 							fileListener.sendFile(chatterIP, new File(fileMessage.getFilePath()),WinChatApplication.mainInstance.getFilePath(),null);//发送文件
+							Log.d("TIEJIANG", "MessageChat---ergodicMessage"
+									+" file file path= "+fileMessage.getFilePath()
+									+" file path= "+WinChatApplication.mainInstance.getFilePath());
 						}else{//不同意发送文件
 
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					Log.d("TIEJIANG", "MessageChat---ergodicMessage"+" Listener.REPLAY_SEND_FILE");
 					break;
 			}
 		}
